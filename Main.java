@@ -7,9 +7,16 @@ import javafx.scene.Group;
 import javafx.event.EventHandler;
 import javax.swing.JOptionPane;
 import java.lang.Integer.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.control.Label;
+import java.util.ArrayList;
+import javafx.geometry.Pos;
 
 
 public class Main extends Application{
+
+    ArrayList<Match> gameList = new ArrayList<Match>();
+
     public static void main(String[] args){
         Application.launch(args);
         
@@ -28,6 +35,28 @@ public class Main extends Application{
             buttonClicked(addGame.getText().toString());
         });
 
+        Group centerGrp = new Group();
+
+        HBox center = new HBox();
+        center.setSize(200, 200);
+        // center.setAlignment(Pos.CENTER);
+        center.setStyle("-fx-background-color: green");
+        Label score = new Label();
+        score.setText("Du vant");
+
+        center.getChildren().add(score);
+        HBox center1 = new HBox();
+        // center1.setAlignment(Pos.CENTER);
+        center1.setStyle("-fx-background-color: red");
+        Label score1 = new Label();
+        score1.setText("Du tapte");
+
+        center1.getChildren().add(score1);
+
+        centerGrp.getChildren().addAll(center, center1);
+
+        pane.setCenter(centerGrp);
+
         Scene scene = new Scene(pane, 800, 600);
 
         primaryStage.setTitle("Match history");
@@ -37,7 +66,7 @@ public class Main extends Application{
 
     }
 
-    public Match buttonClicked(String name){
+    public void buttonClicked(String name){
         int hScore = Integer.parseInt(JOptionPane.showInputDialog(null, "Your goals: "));
         while(hScore < 0){
             hScore= Integer.parseInt(JOptionPane.showInputDialog(null, "You cant have negative goals."));
@@ -50,7 +79,7 @@ public class Main extends Application{
 
         Match m = new Match(hScore, aScore);
 
-        return m;
+        gameList.add(m);
 
     }
 }
