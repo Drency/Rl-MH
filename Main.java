@@ -11,11 +11,20 @@ import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
 import java.util.ArrayList;
 import javafx.geometry.Pos;
-
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.paint.Color;
+import javafx.beans.binding.Bindings;
 
 public class Main extends Application{
 
     ArrayList<Match> gameList = new ArrayList<Match>();
+    BorderPane pane;
+    ScrollPane centerPane;
 
     public static void main(String[] args){
         Application.launch(args);
@@ -24,7 +33,7 @@ public class Main extends Application{
 
     public void start(Stage primaryStage){
         
-        BorderPane pane = new BorderPane();
+        pane = new BorderPane();
         Button addGame = new Button("Add match");
         Button editGame = new Button("Edit game");
 
@@ -35,29 +44,12 @@ public class Main extends Application{
             buttonClicked(addGame.getText().toString());
         });
 
-        Group centerGrp = new Group();
+        centerPane = new ScrollPane();
+        // centerPane.setHbarPolicy(ScrollBarPolicy.NEVER);
+        
+        addCenter();
 
-        HBox center = new HBox();
-        center.setSize(200, 200);
-        // center.setAlignment(Pos.CENTER);
-        center.setStyle("-fx-background-color: green");
-        Label score = new Label();
-        score.setText("Du vant");
-
-        center.getChildren().add(score);
-        HBox center1 = new HBox();
-        // center1.setAlignment(Pos.CENTER);
-        center1.setStyle("-fx-background-color: red");
-        Label score1 = new Label();
-        score1.setText("Du tapte");
-
-        center1.getChildren().add(score1);
-
-        centerGrp.getChildren().addAll(center, center1);
-
-        pane.setCenter(centerGrp);
-
-        Scene scene = new Scene(pane, 800, 600);
+        Scene scene = new Scene(pane, 800, 900);
 
         primaryStage.setTitle("Match history");
         primaryStage.setScene(scene);
@@ -77,9 +69,39 @@ public class Main extends Application{
             aScore= Integer.parseInt(JOptionPane.showInputDialog(null, "Opponents cant have negative goals."));
         }
 
-        Match m = new Match(hScore, aScore);
+        Match m = new Match(50, 0, 600, 100, hScore, aScore);
 
-        gameList.add(m);
+        gameList.add(0, m);
+
+        addCenter();
+
+    }
+
+    public void addCenter(){
+
+        VBox box = new VBox();
+        centerPane.setContent(null);
+        // System.out.println("Running");
+        ArrayList<Match> mL = new ArrayList<Match>();
+        for(int i = 0; i<gameList.size();i++){
+            gameList.get(i).setY((i*100)+20);
+            mL.add(gameList.get(i));
+
+            StackPane sPane = new StackPane();
+            // System.out.println("Array: " + mL);
+            
+            
+
+            //sPane.getChildren().addAll(mL.get(i), new Text(mL.get(i).getHScore() + " : " + mL.get(i).getAScore()));
+            box.getChildren().add(new StackPane(mL.get(i),new Text( mL.get(i).getHScore() + " : " + mL.get(i).getAScore()
+             + "\n" + mL.get(i).getDate())));
+        }
+
+        box.styleProperty().bind(Bindings.concat("-fx-font-size: 30"));    
+        // box.getChildren().setFontSize(20);
+        centerPane.setContent(box);
+        //centerPane.setAlignment(Pos.CENTER);
+        pane.setCenter(centerPane);
 
     }
 }
