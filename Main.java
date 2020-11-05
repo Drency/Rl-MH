@@ -19,18 +19,24 @@ import javafx.scene.layout.VBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.paint.Color;
 import javafx.beans.binding.Bindings;
-
+/**
+ * Main
+ * Creates BorderPane to hold elements and uses methods: buttonClicked & addCenter
+ */
 public class Main extends Application{
 
+    //Global var
     ArrayList<Match> gameList = new ArrayList<Match>();
     BorderPane pane;
     ScrollPane centerPane;
 
+    //Main launching application
     public static void main(String[] args){
         Application.launch(args);
         
     }
 
+    //Starts the stage and creates all the elements
     public void start(Stage primaryStage){
         
         pane = new BorderPane();
@@ -40,15 +46,17 @@ public class Main extends Application{
         pane.setLeft(addGame);
         pane.setRight(editGame);
 
+        //Onclick listener
         addGame.setOnMouseClicked(e ->{
             buttonClicked(addGame.getText().toString());
         });
 
         centerPane = new ScrollPane();
-        // centerPane.setHbarPolicy(ScrollBarPolicy.NEVER);
         
+        //Adding central part.
         addCenter();
 
+        //Creating scene and adding inn the pane to display to user
         Scene scene = new Scene(pane, 800, 900);
 
         primaryStage.setTitle("Match history");
@@ -58,6 +66,7 @@ public class Main extends Application{
 
     }
 
+    //Button clicked handler
     public void buttonClicked(String name){
         int hScore = Integer.parseInt(JOptionPane.showInputDialog(null, "Your goals: "));
         while(hScore < 0){
@@ -73,10 +82,12 @@ public class Main extends Application{
 
         gameList.add(0, m);
 
+        //Updates Center
         addCenter();
 
     }
 
+    //Adds components to the senter via a stackpane for text and object. inside a VBox container
     public void addCenter(){
 
         VBox box = new VBox();
