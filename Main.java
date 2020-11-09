@@ -1,3 +1,4 @@
+//Imports
 import javafx.scene.layout.BorderPane;
 import javafx.scene.control.Button;
 import javafx.application.Application;
@@ -19,6 +20,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.paint.Color;
 import javafx.beans.binding.Bindings;
+import java.io.*;
+import java.util.*;
+import java.lang.Integer;
 /**
  * Main
  * Creates BorderPane to hold elements and uses methods: buttonClicked & addCenter
@@ -27,8 +31,11 @@ public class Main extends Application{
 
     //Global var
     ArrayList<Match> gameList = new ArrayList<Match>();
+     ArrayList<Integer> intList = new ArrayList<Integer>();
     BorderPane pane;
     ScrollPane centerPane;
+    Scanner leser;
+    final String filnavn = "history.txt";
 
     //Main launching application
     public static void main(String[] args){
@@ -42,6 +49,50 @@ public class Main extends Application{
         pane = new BorderPane();
         Button addGame = new Button("Add match");
         Button editGame = new Button("Edit game");
+
+        //Getting matches from txt file
+        try {
+            
+            File fil = new File(filnavn);
+            leser = new Scanner(fil);
+            String linje = "";
+            do{
+                
+                linje = leser.nextLine();
+                String[] matchList =linje.split(", *");
+                for(String s : matchList){
+                    intList.add(Integer.parseInt(s));
+                }
+                
+            } while( leser.hasNextLine() );
+            
+            leser.close();
+        } catch (Exception e) {
+            //TODO: handle exception
+            System.out.println(e);
+        }
+        //String nyttNavn = showInputDialog("Skriv inn et navn: \n Eks: Fornavn Etternavn");
+
+        ArrayList<Integer> aScoreList = new ArrayList<Integer>();
+        ArrayList<Integer> hScoreList = new ArrayList<Integer>();
+    
+        int scoreH, scoreA;
+
+        for (int x = 0; x<intList.size(); x+=2){
+            hScoreList.add(intList.get(x));
+        }
+
+        for(int w = 1; w<intList.size(); w+=2){
+            aScoreList.add(intList.get(w));
+        }
+
+        System.out.println(aScoreList + " : " + hScoreList);
+        for(int y = 0; y < hScoreList.size();y++){
+            gameList.add(new Match(50, 0, 600, 100, hScoreList.get(y), aScoreList.get(y)));
+        }
+
+
+        System.out.println("Gamelist from scratch: " + gameList);
 
         pane.setLeft(addGame);
         pane.setRight(editGame);
@@ -85,6 +136,8 @@ public class Main extends Application{
         //Updates Center
         addCenter();
 
+        updateFile(m);
+
     }
 
     //Adds components to the senter via a stackpane for text and object. inside a VBox container
@@ -113,6 +166,24 @@ public class Main extends Application{
         centerPane.setContent(box);
         //centerPane.setAlignment(Pos.CENTER);
         pane.setCenter(centerPane);
+
+    }
+
+    public void updateFile(Match m){
+
+        try {
+            File fil = new File(filnavn);
+        PrintWriter skriver = new PrintWriter(filnavn);
+
+        for(int i = 0; i< gameList.size(); i++){
+            
+            skriver.println(gameList.get(i).getHScore() + "," + gameList.get(i).getAScore());
+        }
+
+        skriver.close();
+        } catch (Exception e) {
+            //TODO: handle exception
+        }
 
     }
 }
