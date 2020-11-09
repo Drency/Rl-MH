@@ -17,12 +17,14 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.paint.Color;
 import javafx.beans.binding.Bindings;
 import java.io.*;
 import java.util.*;
 import java.lang.Integer;
+import java.awt.Insets;
 /**
  * Main
  * Creates BorderPane to hold elements and uses methods: buttonClicked & addCenter
@@ -61,7 +63,7 @@ public class Main extends Application{
                 linje = leser.nextLine();
                 matchList =linje.split(",");
                 if(matchList.length == 3){
-                    Match m = new Match(50, 0, 600, 100, matchList[0], matchList[1]);
+                    Match m = new Match(50, 0, 550, 100, matchList[0], matchList[1]);
                     m.setDate(matchList[2]);
                     matchList = new String[0];
                     gameList.add(m);
@@ -75,7 +77,8 @@ public class Main extends Application{
             System.out.println(e);
         }
 
-        pane.setLeft(addGame);
+        setRight();
+        pane.setLeft(addGame); 
 
         //Onclick listener
         addGame.setOnMouseClicked(e ->{
@@ -110,7 +113,7 @@ public class Main extends Application{
             aScore= JOptionPane.showInputDialog(null, "Opponents cant have negative goals.");
         }
         //Creates match object
-        Match m = new Match(50, 0, 600, 100, hScore, aScore);
+        Match m = new Match(50, 0, 550, 100, hScore, aScore);
 
         gameList.add(0, m);
 
@@ -119,6 +122,8 @@ public class Main extends Application{
 
         //Udates file
         updateFile(m);
+
+        setRight();
 
     }
 
@@ -158,5 +163,33 @@ public class Main extends Application{
             System.out.println(e);
         }
 
+    }
+
+    public void setRight(){
+        int won = 0;
+        for(Match m : gameList){
+            if(Integer.parseInt(m.getHScore()) > Integer.parseInt(m.getAScore())){
+                won++;
+            }
+        }
+        VBox g = new VBox(5);
+        
+        Text antMatch = new Text();
+        Text gWon = new Text();
+        Text gLoss = new Text();
+
+        antMatch.styleProperty().bind(Bindings.concat("-fx-font-size: 20"));
+        antMatch.setText("Matches played: \n" + Integer.toString(gameList.size()));
+
+        gWon.styleProperty().bind(Bindings.concat("-fx-font-size: 20;"));
+        gWon.setFill(Color.GREEN);
+        gWon.setText("\n Matches won: \n" + Integer.toString(won));
+
+        gLoss.styleProperty().bind(Bindings.concat("-fx-font-size: 20;"));
+        gLoss.setFill(Color.RED);
+        gLoss.setText("\n Games lost: \n" + (gameList.size() - won));
+        
+        g.getChildren().addAll(antMatch, gWon, gLoss);
+        pane.setRight(g);
     }
 }

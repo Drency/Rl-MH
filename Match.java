@@ -69,4 +69,5 @@ public class Match extends Rectangle{
     public void setAScore(String aScore){
         this.aScore = aScore;
     }
+
 }
