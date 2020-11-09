@@ -36,6 +36,7 @@ public class Main extends Application{
     ScrollPane centerPane;
     Scanner leser;
     final String filnavn = "history.txt";
+    String[] matchList;
 
     //Main launching application
     public static void main(String[] args){
@@ -48,20 +49,22 @@ public class Main extends Application{
         
         pane = new BorderPane();
         Button addGame = new Button("Add match");
-        Button editGame = new Button("Edit game");
+        // Button editGame = new Button("Edit game");
 
         //Getting matches from txt file
         try {
-            
             File fil = new File(filnavn);
             leser = new Scanner(fil);
             String linje = "";
             do{
                 
                 linje = leser.nextLine();
-                String[] matchList =linje.split(", *");
-                for(String s : matchList){
-                    intList.add(Integer.parseInt(s));
+                matchList =linje.split(",");
+                if(matchList.length == 3){
+                    Match m = new Match(50, 0, 600, 100, matchList[0], matchList[1]);
+                    m.setDate(matchList[2]);
+                    matchList = new String[0];
+                    gameList.add(m);
                 }
                 
             } while( leser.hasNextLine() );
@@ -71,37 +74,15 @@ public class Main extends Application{
             //TODO: handle exception
             System.out.println(e);
         }
-        //String nyttNavn = showInputDialog("Skriv inn et navn: \n Eks: Fornavn Etternavn");
-
-        ArrayList<Integer> aScoreList = new ArrayList<Integer>();
-        ArrayList<Integer> hScoreList = new ArrayList<Integer>();
-    
-        int scoreH, scoreA;
-
-        for (int x = 0; x<intList.size(); x+=2){
-            hScoreList.add(intList.get(x));
-        }
-
-        for(int w = 1; w<intList.size(); w+=2){
-            aScoreList.add(intList.get(w));
-        }
-
-        System.out.println(aScoreList + " : " + hScoreList);
-        for(int y = 0; y < hScoreList.size();y++){
-            gameList.add(new Match(50, 0, 600, 100, hScoreList.get(y), aScoreList.get(y)));
-        }
-
-
-        System.out.println("Gamelist from scratch: " + gameList);
 
         pane.setLeft(addGame);
-        pane.setRight(editGame);
 
         //Onclick listener
         addGame.setOnMouseClicked(e ->{
             buttonClicked(addGame.getText().toString());
         });
 
+        //Initializing scrollpane for center of the BorderPane
         centerPane = new ScrollPane();
         
         //Adding central part.
@@ -119,16 +100,16 @@ public class Main extends Application{
 
     //Button clicked handler
     public void buttonClicked(String name){
-        int hScore = Integer.parseInt(JOptionPane.showInputDialog(null, "Your goals: "));
-        while(hScore < 0){
-            hScore= Integer.parseInt(JOptionPane.showInputDialog(null, "You cant have negative goals."));
+        String hScore = JOptionPane.showInputDialog(null, "Your goals: ");
+        while(Integer.parseInt(hScore) < 0){
+            hScore= JOptionPane.showInputDialog(null, "You cant have negative goals.");
 
         }
-        int aScore = Integer.parseInt(JOptionPane.showInputDialog(null, "Opponents goals: "));
-        while(aScore < 0){
-            aScore= Integer.parseInt(JOptionPane.showInputDialog(null, "Opponents cant have negative goals."));
+        String aScore = JOptionPane.showInputDialog(null, "Opponents goals: ");
+        while(Integer.parseInt(aScore) < 0){
+            aScore= JOptionPane.showInputDialog(null, "Opponents cant have negative goals.");
         }
-
+        //Creates match object
         Match m = new Match(50, 0, 600, 100, hScore, aScore);
 
         gameList.add(0, m);
@@ -136,6 +117,7 @@ public class Main extends Application{
         //Updates Center
         addCenter();
 
+        //Udates file
         updateFile(m);
 
     }
@@ -145,44 +127,35 @@ public class Main extends Application{
 
         VBox box = new VBox();
         centerPane.setContent(null);
-        // System.out.println("Running");
         ArrayList<Match> mL = new ArrayList<Match>();
         for(int i = 0; i<gameList.size();i++){
             gameList.get(i).setY((i*100)+20);
             mL.add(gameList.get(i));
-
-            StackPane sPane = new StackPane();
-            // System.out.println("Array: " + mL);
             
-            
-
-            //sPane.getChildren().addAll(mL.get(i), new Text(mL.get(i).getHScore() + " : " + mL.get(i).getAScore()));
             box.getChildren().add(new StackPane(mL.get(i),new Text( mL.get(i).getHScore() + " : " + mL.get(i).getAScore()
              + "\n" + mL.get(i).getDate())));
         }
 
         box.styleProperty().bind(Bindings.concat("-fx-font-size: 30"));    
-        // box.getChildren().setFontSize(20);
         centerPane.setContent(box);
-        //centerPane.setAlignment(Pos.CENTER);
         pane.setCenter(centerPane);
 
     }
 
+    //Writes the newly created object to a file
     public void updateFile(Match m){
 
         try {
             File fil = new File(filnavn);
-        PrintWriter skriver = new PrintWriter(filnavn);
+            PrintWriter skriver = new PrintWriter(filnavn);
 
-        for(int i = 0; i< gameList.size(); i++){
-            
-            skriver.println(gameList.get(i).getHScore() + "," + gameList.get(i).getAScore());
-        }
+            for(int i = 0; i< gameList.size(); i++){
+                skriver.println(gameList.get(i).getHScore() + "," + gameList.get(i).getAScore() + "," + gameList.get(i).getDate());
+            }
 
-        skriver.close();
+            skriver.close();
         } catch (Exception e) {
-            //TODO: handle exception
+            System.out.println(e);
         }
 
     }

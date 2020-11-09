@@ -12,7 +12,7 @@ import javafx.scene.paint.Color;
 public class Match extends Rectangle{
 
     //Global vars
-    int hScore, aScore;
+    String hScore, aScore;
     double x, y, w, h;
     String date;
     boolean win = false;
@@ -21,7 +21,7 @@ public class Match extends Rectangle{
      * Constructor for the Match object
      * @params x = x pos, y= y pos, w = width of box, h = height of box, score1 = your score, score2 = their score
      */
-    public Match(double x, double y, double w, double h, int score1, int score2){
+    public Match(double x, double y, double w, double h, String score1, String score2){
         super(x, y, w, h);
         this.hScore = score1;
         this.aScore = score2;
@@ -31,7 +31,7 @@ public class Match extends Rectangle{
         Color fillColor = Color.RED;
         
         //Sets color based on if you win or lose.
-        if(hScore > aScore){
+        if(Integer.parseInt(hScore) > Integer.parseInt(aScore)){
             win=true;
             fillColor = Color.GREEN;
         }
@@ -54,20 +54,19 @@ public class Match extends Rectangle{
         this.date = date;
     }
 
-    public int getHScore(){
+    public String getHScore(){
         return this.hScore;
     }
 
-    public void setHScore(int hScore){
+    public void setHScore(String hScore){
         this.hScore = hScore;
     }
 
-    public int getAScore(){
+    public String getAScore(){
         return this.aScore;
     }
 
-    public void setAScore(int aScore){
+    public void setAScore(String aScore){
         this.aScore = aScore;
     }
-
 }
